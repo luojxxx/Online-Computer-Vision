@@ -17,18 +17,16 @@ class App extends Component {
       this.postApi = this.postApi.bind(this);
   }
 
-  getBase64Image(){     
+  getBase64Image() {
+      var imgElem = document.getElementById("mainImg");
       var canvas = document.createElement("canvas");
-      var img1=document.createElement("img"); 
-      var p = document.getElementById("mainImg").src;
-      img1.setAttribute('src', p); 
-      canvas.width = img1.width; 
-      canvas.height = img1.height; 
-      var ctx = canvas.getContext("2d"); 
-      ctx.drawImage(img1, 0, 0); 
+      canvas.width = imgElem.clientWidth;
+      canvas.height = imgElem.clientHeight;
+      var ctx = canvas.getContext("2d");
+      ctx.drawImage(imgElem, 0, 0);
       var dataURL = canvas.toDataURL("image/png");
-      return dataURL;
-  } 
+      return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+  }
 
 
   onDZDrop(files) {
