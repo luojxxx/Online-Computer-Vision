@@ -40,7 +40,7 @@ application.config.from_envvar('APP_CONFIG', silent=True)
 # Only enable Flask debugging if an env var is set to true
 application.debug = application.config['FLASK_DEBUG'] in ['true', 'True']
 
-@application.route('/api/v2/response',methods=['POST'])
+@application.route('/api/v1/featureprocessing',methods=['POST'])
 def apiResponse():
 
     return jsonify({ 'response': 'we good' })
