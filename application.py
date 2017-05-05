@@ -44,7 +44,7 @@ application.config.from_envvar('APP_CONFIG', silent=True)
 application.debug = application.config['FLASK_DEBUG'] in ['true', 'True']
 
 
-@app.route('/api/v1/featureprocessing',methods=['POST'])
+@application.route('/api/v1/featureprocessing',methods=['POST'])
 def apiResponse():
     postData = request.get_json()
     imgData = postData['imgData']
