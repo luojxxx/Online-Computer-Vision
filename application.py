@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 import os
 import sys
 import json
@@ -10,7 +9,6 @@ import traceback
 import requests
 import io
 import re
-import jwt
 import base64
 from functools import wraps
 
