@@ -52,6 +52,10 @@ def arrayIntoBase64String(imgArr):
 
 def getLines(grayImg, edges, lineRho, lineTheta, lineThreshold, lineMinLength, lineMaxGap):
     lines = cv2.HoughLinesP(edges, lineRho, lineTheta, lineThreshold, minLineLength=lineMinLength,maxLineGap=lineMaxGap)
+
+    if lines is None:
+        return grayImg
+        
     for line in lines:
         x1,y1,x2,y2 = line[0]
         cv2.line(grayImg,(x1,y1),(x2,y2),(0,255,0),2)

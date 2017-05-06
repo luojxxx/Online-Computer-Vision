@@ -163,7 +163,7 @@ class App extends Component {
               <InputRange label='theta' value={this.state.lineTheta} callBack={this.onUpdate}
               min='0' max='100' step='0.0001' />
               <InputRange label='threshold' value={this.state.lineThreshold} callBack={this.onUpdate}
-              min='0' max='100' step='0.1' />
+              min='0' max='100' step='1' />
               <InputRange label='line minLength' value={this.state.lineMinLength} callBack={this.onUpdate}
               min='0' max='100' step='0.1' />
               <InputRange label='line maxGap' value={this.state.lineMaxGap} callBack={this.onUpdate}
@@ -175,11 +175,11 @@ class App extends Component {
             <div className='settingsContainer'>
               
               <InputRange label='block size' value={this.state.cornerBlockSize} callBack={this.onUpdate}
-              min='0' max='100' step='0.1' />
+              min='0' max='100' step='1' />
               <InputRange label='k size' value={this.state.cornerKSize} callBack={this.onUpdate}
-              min='0' max='100' step='0.1' />
+              min='1' max='31' step='2' />
               <InputRange label='k' value={this.state.cornerK} callBack={this.onUpdate}
-              min='0' max='100' step='0.01' />
+              min='0' max='1' step='0.01' />
               
             </div>
 
