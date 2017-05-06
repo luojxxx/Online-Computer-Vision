@@ -60,7 +60,7 @@ def getLines(grayImg, edges, lineRho, lineTheta, lineThreshold, lineMinLength, l
 
 def getCorners(grayImg, cornerBlockSize, cornerKSize, cornerK):
     grayImg = np.float32(grayImg)
-    dst = cv2.cornerHarris(grayImg,2,3,0.04)
+    dst = cv2.cornerHarris(grayImg, cornerBlockSize, cornerKSize, cornerK)
     #result is dilated for marking the corners, not important
     dst = cv2.dilate(dst,None)
     # Threshold for an optimal value, it may vary depending on the image.
@@ -90,12 +90,12 @@ def apiResponse():
     lineImgBase64 = arrayIntoBase64String(getLines(grayImg, edges,
         float(postData['lineRho']),
         float(postData['lineTheta']),
-        int(postData['lineThreshold']),
+        int(float(postData['lineThreshold'])),
         float(postData['lineMinLength']),
         float(postData['lineMaxGap']) ))
     cornerImgBase64 = arrayIntoBase64String(getCorners(grayImg2, 
-        int(postData['cornerBlockSize']),
-        int(postData['cornerKSize']),
+        int(float(postData['cornerBlockSize'])),
+        int(float(postData['cornerKSize'])),
         float(postData['cornerK']) ))
 
     return jsonify({'edgeImg': edgeImgBase64, 'lineImg': lineImgBase64, 'cornerImg': cornerImgBase64 })

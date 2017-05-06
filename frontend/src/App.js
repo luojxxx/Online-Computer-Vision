@@ -96,7 +96,7 @@ class App extends Component {
   }
 
   onUpdate(evt) {
-    evt.preventDefault();
+    // evt.preventDefault();
     this.setState(this.getFormInfo());
     this.postApi();
   }
