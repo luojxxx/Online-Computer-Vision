@@ -7,6 +7,7 @@ import datetime
 import string
 import traceback
 import requests
+import copy
 import io
 import re
 import base64
@@ -79,6 +80,7 @@ def apiResponse():
     imgData = Image.open(io.BytesIO(base64.b64decode(imgData)))
     imgData = np.array(imgData)
     grayImg = cv2.cvtColor(imgData, cv2.COLOR_BGR2GRAY)
+    grayImg2 = copy.copy(grayImg)
 
     edges = cv2.Canny( grayImg, 
         float(postData['edgeMinVal']), 
@@ -91,7 +93,7 @@ def apiResponse():
         int(postData['lineThreshold']),
         float(postData['lineMinLength']),
         float(postData['lineMaxGap']) ))
-    cornerImgBase64 = arrayIntoBase64String(getCorners(grayImg, 
+    cornerImgBase64 = arrayIntoBase64String(getCorners(grayImg2, 
         int(postData['cornerBlockSize']),
         int(postData['cornerKSize']),
         float(postData['cornerK']) ))
