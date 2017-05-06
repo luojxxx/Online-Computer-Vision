@@ -20,7 +20,7 @@ class App extends Component {
         lineTheta: (3.14/180),
         lineThreshold: 100,
         lineMinLength: 100,
-        lineMinGap: 10,
+        lineMaxGap: 10,
         cornerBlockSize: 2,
         cornerKSize: 3,
         cornerK: 0.04,
@@ -42,7 +42,7 @@ class App extends Component {
     document.getElementById('theta').value = this.state.lineTheta;
     document.getElementById('threshold').value = this.state.lineThreshold;
     document.getElementById('line minLength').value = this.state.lineMinLength;
-    document.getElementById('line minGap').value = this.state.lineMinGap;
+    document.getElementById('line maxGap').value = this.state.lineMaxGap;
     document.getElementById('block size').value = this.state.cornerBlockSize;
     document.getElementById('k size').value = this.state.cornerKSize;
     document.getElementById('k').value = this.state.cornerK;
@@ -88,7 +88,7 @@ class App extends Component {
           lineTheta: document.getElementById('theta').value,
           lineThreshold: document.getElementById('threshold').value,
           lineMinLength: document.getElementById('line minLength').value,
-          lineMinGap: document.getElementById('line minGap').value,
+          lineMaxGap: document.getElementById('line maxGap').value,
           cornerBlockSize: document.getElementById('block size').value,
           cornerKSize: document.getElementById('k size').value,
           cornerK: document.getElementById('k').value,
@@ -114,7 +114,10 @@ class App extends Component {
       return response.json();
 
     }).then( (json) => {
-      this.setState({ lineImg: 'data:image/png;base64,' + json.response });
+      this.setState({ 
+        edgeImg: 'data:image/png;base64,' + json.edgeImg,
+        lineImg: 'data:image/png;base64,' + json.lineImg,
+        cornerImg: 'data:image/png;base64,' + json.cornerImg });
     })
   }
 
@@ -134,7 +137,9 @@ class App extends Component {
             onDrop={this.onDZDrop}
             className='dropzone'>
             <img id='mainImg' src={this.state.img}  />
+            <img id='mainImg' src={this.state.edgeImg}  />
             <img id='mainImg' src={this.state.lineImg}  />
+            <img id='mainImg' src={this.state.cornerImg}  />
             </Dropzone>
           </div>
 
@@ -161,7 +166,7 @@ class App extends Component {
               min='1' max='100' step='5' />
               <InputRange label='line minLength' value={this.state.lineMinLength} callBack={this.onUpdate}
               min='1' max='100' step='5' />
-              <InputRange label='line minGap' value={this.state.lineMinGap} callBack={this.onUpdate}
+              <InputRange label='line maxGap' value={this.state.lineMaxGap} callBack={this.onUpdate}
               min='1' max='100' step='5' />
               
             </div>

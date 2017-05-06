@@ -49,15 +49,15 @@ def arrayIntoBase64String(imgArr):
     pil_img.save(buff, format="JPEG")
     return base64.b64encode(buff.getvalue()).decode("utf-8")
 
-def getLines(grayImg, edges):
-    lines = cv2.HoughLinesP(edges,1,np.pi/180,100,minLineLength=100,maxLineGap=10)
+def getLines(grayImg, edges, lineRho, lineTheta, lineThreshold, lineMinLength, lineMaxGap):
+    lines = cv2.HoughLinesP(edges, lineRho, lineTheta, lineThreshold, minLineLength=lineMinLength,maxLineGap=lineMaxGap)
     for line in lines:
         x1,y1,x2,y2 = line[0]
         cv2.line(grayImg,(x1,y1),(x2,y2),(0,255,0),2)
 
     return grayImg
 
-def getCorners(grayImg):
+def getCorners(grayImg, cornerBlockSize, cornerKSize, cornerK):
     grayImg = np.float32(grayImg)
     dst = cv2.cornerHarris(grayImg,2,3,0.04)
     #result is dilated for marking the corners, not important
@@ -80,11 +80,19 @@ def apiResponse():
     imgData = np.array(imgData)
     grayImg = cv2.cvtColor(imgData, cv2.COLOR_BGR2GRAY)
 
-    edges = cv2.Canny( grayImg, 5, 25)
+    edges = cv2.Canny( grayImg, postData['edgeMinVal'], postData['edgeMaxVal'])
 
     edgeImgBase64 = arrayIntoBase64String(edges)
-    lineImgBase64 = arrayIntoBase64String(getLines(grayImg, edges))
-    cornerImgBase64 = arrayIntoBase64String(getCorners(grayImg))
+    lineImgBase64 = arrayIntoBase64String(getLines(grayImg, edges,
+        postData['lineRho'],
+        postData['lineTheta'],
+        postData['lineThreshold'],
+        postData['lineMinLength'],
+        postData['lineMaxGap']))
+    cornerImgBase64 = arrayIntoBase64String(getCorners(grayImg, 
+        postData['cornerBlockSize'],
+        postData['cornerKSize'],
+        postData['cornerK']))
 
     return jsonify({'edgeImg': edgeImgBase64, 'lineImg': lineImgBase64, 'cornerImg': cornerImgBase64 })
 
