@@ -74,25 +74,27 @@ def getCorners(grayImg, cornerBlockSize, cornerKSize, cornerK):
 @application.route('/api/v1/featureprocessing',methods=['POST'])
 def apiResponse():
     postData = request.get_json()
-    imgData = postData['imgData']
 
+    imgData = postData['imgData']
     imgData = Image.open(io.BytesIO(base64.b64decode(imgData)))
     imgData = np.array(imgData)
     grayImg = cv2.cvtColor(imgData, cv2.COLOR_BGR2GRAY)
 
-    edges = cv2.Canny( grayImg, postData['edgeMinVal'], postData['edgeMaxVal'])
+    edges = cv2.Canny( grayImg, 
+        float(postData['edgeMinVal']), 
+        float(postData['edgeMaxVal']) )
 
     edgeImgBase64 = arrayIntoBase64String(edges)
     lineImgBase64 = arrayIntoBase64String(getLines(grayImg, edges,
-        postData['lineRho'],
-        postData['lineTheta'],
-        postData['lineThreshold'],
-        postData['lineMinLength'],
-        postData['lineMaxGap']))
+        float(postData['lineRho']),
+        float(postData['lineTheta']),
+        int(postData['lineThreshold']),
+        float(postData['lineMinLength']),
+        float(postData['lineMaxGap']) ))
     cornerImgBase64 = arrayIntoBase64String(getCorners(grayImg, 
-        postData['cornerBlockSize'],
-        postData['cornerKSize'],
-        postData['cornerK']))
+        int(postData['cornerBlockSize']),
+        int(postData['cornerKSize']),
+        float(postData['cornerK']) ))
 
     return jsonify({'edgeImg': edgeImgBase64, 'lineImg': lineImgBase64, 'cornerImg': cornerImgBase64 })
 

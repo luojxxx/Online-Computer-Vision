@@ -149,9 +149,9 @@ class App extends Component {
             <div className='settingsContainer'>
               
               <InputRange label='minVal' value={this.state.edgeMinVal} callBack={this.onUpdate}
-              min='1' max='100' step='5' />
+              min='0' max='100' step='0.1' />
               <InputRange label='maxVal' value={this.state.edgeMaxVal} callBack={this.onUpdate}
-              min='1' max='100' step='5' />
+              min='0' max='100' step='0.1' />
               
             </div>
 
@@ -159,15 +159,15 @@ class App extends Component {
             <div className='settingsContainer'>
               
               <InputRange label='rho' value={this.state.lineRho} callBack={this.onUpdate}
-              min='1' max='100' step='5' />
+              min='0' max='100' step='0.1' />
               <InputRange label='theta' value={this.state.lineTheta} callBack={this.onUpdate}
-              min='1' max='100' step='5' />
+              min='0' max='100' step='0.0001' />
               <InputRange label='threshold' value={this.state.lineThreshold} callBack={this.onUpdate}
-              min='1' max='100' step='5' />
+              min='0' max='100' step='0.1' />
               <InputRange label='line minLength' value={this.state.lineMinLength} callBack={this.onUpdate}
-              min='1' max='100' step='5' />
+              min='0' max='100' step='0.1' />
               <InputRange label='line maxGap' value={this.state.lineMaxGap} callBack={this.onUpdate}
-              min='1' max='100' step='5' />
+              min='0' max='100' step='0.1' />
               
             </div>
 
@@ -175,11 +175,11 @@ class App extends Component {
             <div className='settingsContainer'>
               
               <InputRange label='block size' value={this.state.cornerBlockSize} callBack={this.onUpdate}
-              min='1' max='100' step='5' />
+              min='0' max='100' step='0.1' />
               <InputRange label='k size' value={this.state.cornerKSize} callBack={this.onUpdate}
-              min='1' max='100' step='5' />
+              min='0' max='100' step='0.1' />
               <InputRange label='k' value={this.state.cornerK} callBack={this.onUpdate}
-              min='1' max='100' step='5' />
+              min='0' max='100' step='0.01' />
               
             </div>
 
