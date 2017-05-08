@@ -1,16 +1,18 @@
 .App {
-  width: 75%;
+  width: 100%;
   margin: auto;
 }
 
 .header {
   display: block;
+  text-align: center;
 }
 
 .contentContainer {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  justify-content: space-between;
 }
 
 .dropzone {
@@ -19,7 +21,7 @@
 }
 
 .imageContainer {
-  width: 47%;
+  width: 100%;
   margin: 10px;
 }
 
@@ -28,7 +30,7 @@
 }
 
 .controlsContainer {
-  width: 47%;
+  width: 100%;
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
@@ -40,6 +42,7 @@
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .setting {
@@ -51,4 +54,37 @@
 
 input {
   text-align: center;
+  border: none;
+  background-color: transparent;
+}
+
+body {
+  color: white;
+  background-color: #0C0C0C;
+}
+
+@media screen and (min-width: 960px) {
+  .App {
+    width: 75%;
+}
+
+  .contentContainer {
+  flex-direction: row;
+}
+
+.imageContainer {
+  width: 47%;
+}
+
+.controlsContainer {
+  width: 47%;
+}
+
+}
+
+@media screen and (min-width: 1920px) {
+  .App {
+    width: 1080px;
+}
+
 }

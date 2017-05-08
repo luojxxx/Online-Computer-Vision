@@ -140,7 +140,7 @@ class App extends Component {
       <div className="App">
 
         <div className='header'>
-          <h1>Terminator Vision - Search Mode</h1>
+          <h1>Online Computer Vision</h1>
         </div>
 
         <div className='contentContainer'>
@@ -150,11 +150,11 @@ class App extends Component {
             ref={(node) => { this.dropzone = node; }} 
             onDrop={this.onDZDrop}
             className='dropzone'>
-            <p>Click or Drag and Drop Images Below for Analysis</p>
             <img className='imageStyle' id='mainImg' src={this.state.img} />
             <img className='imageStyle' src={this.state.edgeImg}  />
             <img className='imageStyle' src={this.state.lineImg}  />
             <img className='imageStyle' src={this.state.cornerImg}  />
+            <p>Click or Drag and Drop Images Above for Analysis</p>
             </Dropzone>
           </div>
 
