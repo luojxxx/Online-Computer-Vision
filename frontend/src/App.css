@@ -23,6 +23,10 @@
   margin: 10px;
 }
 
+.imageStyle {
+  width:50%;
+}
+
 .controlsContainer {
   width: 47%;
   display: flex;
@@ -43,4 +47,8 @@
   flex-direction: column;
   text-align: center;
   margin: 10px;
+}
+
+input {
+  text-align: center;
 }

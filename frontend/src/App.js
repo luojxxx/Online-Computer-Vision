@@ -26,13 +26,14 @@ class App extends Component {
         cornerK: 0.04,
       };
       this.debounce = this.debounce.bind(this);
+      this.returnDim = this.returnDim.bind(this);
       this.getBase64Image = this.getBase64Image.bind(this);
       this.onDZDrop = this.onDZDrop.bind(this);
       this.onDZClick = this.onDZClick.bind(this);
       this.getFormInfo = this.getFormInfo.bind(this);
       this.onUpdate = this.onUpdate.bind(this);
       this.postApi = this.postApi.bind(this);
-      this.postApi = this.debounce(this.postApi, 1000);
+      this.postApi = this.debounce(this.postApi, 250);
   }
 
   componentDidMount() {
@@ -46,6 +47,8 @@ class App extends Component {
     document.getElementById('block size').value = this.state.cornerBlockSize;
     document.getElementById('k size').value = this.state.cornerKSize;
     document.getElementById('k').value = this.state.cornerK;
+
+    setTimeout( this.postApi, 250 )
   }
 
   debounce(fn, delay) {
@@ -59,11 +62,20 @@ class App extends Component {
     };
   }
 
+  returnDim(url) {
+        var img = new Image();
+        img.src = url;
+        return { width: img.width , height: img.height }
+    }
+
   getBase64Image() {
       var imgElem = document.getElementById("mainImg");
       var canvas = document.createElement("canvas");
-      canvas.width = imgElem.clientWidth;
-      canvas.height = imgElem.clientHeight;
+
+      var dim = this.returnDim(imgElem.src)
+
+      canvas.width = dim.width
+      canvas.height = dim.height
       var ctx = canvas.getContext("2d");
       ctx.drawImage(imgElem, 0, 0);
       var dataURL = canvas.toDataURL("image/png");
@@ -73,6 +85,8 @@ class App extends Component {
   onDZDrop(files) {
       var imgSrc = URL.createObjectURL(files[0]);
       this.setState({ img:imgSrc });
+
+      this.postApi();
   }
 
   onDZClick(evt) {
@@ -136,10 +150,11 @@ class App extends Component {
             ref={(node) => { this.dropzone = node; }} 
             onDrop={this.onDZDrop}
             className='dropzone'>
-            <img id='mainImg' src={this.state.img}  />
-            <img id='mainImg' src={this.state.edgeImg}  />
-            <img id='mainImg' src={this.state.lineImg}  />
-            <img id='mainImg' src={this.state.cornerImg}  />
+            <p>Click or Drag and Drop Images Below for Analysis</p>
+            <img className='imageStyle' id='mainImg' src={this.state.img} />
+            <img className='imageStyle' src={this.state.edgeImg}  />
+            <img className='imageStyle' src={this.state.lineImg}  />
+            <img className='imageStyle' src={this.state.cornerImg}  />
             </Dropzone>
           </div>
 
@@ -149,9 +164,9 @@ class App extends Component {
             <div className='settingsContainer'>
               
               <InputRange label='minVal' value={this.state.edgeMinVal} callBack={this.onUpdate}
-              min='0' max='100' step='0.1' />
+              min='0' max='255' step='0.1' />
               <InputRange label='maxVal' value={this.state.edgeMaxVal} callBack={this.onUpdate}
-              min='0' max='100' step='0.1' />
+              min='0' max='255' step='0.1' />
               
             </div>
 
@@ -161,13 +176,13 @@ class App extends Component {
               <InputRange label='rho' value={this.state.lineRho} callBack={this.onUpdate}
               min='0' max='100' step='0.1' />
               <InputRange label='theta' value={this.state.lineTheta} callBack={this.onUpdate}
-              min='0' max='100' step='0.0001' />
+              min='0' max='3.14' step='0.017444444444444446' />
               <InputRange label='threshold' value={this.state.lineThreshold} callBack={this.onUpdate}
-              min='0' max='100' step='1' />
+              min='0' max='300' step='1' />
               <InputRange label='line minLength' value={this.state.lineMinLength} callBack={this.onUpdate}
-              min='0' max='100' step='0.1' />
+              min='0' max='1000' step='1' />
               <InputRange label='line maxGap' value={this.state.lineMaxGap} callBack={this.onUpdate}
-              min='0' max='100' step='0.1' />
+              min='0' max='100' step='1' />
               
             </div>
 
