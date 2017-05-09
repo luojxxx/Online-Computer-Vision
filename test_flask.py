@@ -1,80 +1,97 @@
-# from flask import Flask, jsonify, render_template, request
-# from flask_cors import CORS, cross_origin
-# app = Flask(__name__)
-# CORS(app)
-# import io
-# import os
-# import random
+from flask import Flask, jsonify, render_template, request
+from flask_cors import CORS, cross_origin
+application = Flask(__name__)
+CORS(application)
+import io
+import os
+import random
+
+import base64
+import cv2
+import numpy as np
+from PIL import Image
+
+scriptpath = os.path.dirname(os.path.realpath(__file__))
+
+@application.route('/')
+def index():
+    return render_template('test_page.html')
+
+def arrayIntoBase64String(imgArr):
+    pil_img = Image.fromarray(imgArr)
+    buff = io.BytesIO()
+    pil_img.save(buff, format="JPEG")
+    return base64.b64encode(buff.getvalue()).decode("utf-8")
+
+def getLines(grayImg, edges, lineRho, lineTheta, lineThreshold, lineMinLength, lineMaxGap):
+    lines = cv2.HoughLinesP(edges, lineRho, lineTheta, lineThreshold, minLineLength=lineMinLength,maxLineGap=lineMaxGap)
+    grayImg = cv2.cvtColor(grayImg, cv2.COLOR_GRAY2RGB)
+
+    if lines is None:
+        return grayImg
+    for line in lines:
+        x1,y1,x2,y2 = line[0]
+        cv2.line(grayImg,(x1,y1),(x2,y2),(0,255,0),2)
+
+    return grayImg
+
+def getCorners(grayImg, cornerBlockSize, cornerKSize, cornerK):
+    grayImg = np.float32(grayImg)
+    dst = cv2.cornerHarris(grayImg,2,3,0.04)
+    #result is dilated for marking the corners, not important
+    dst = cv2.dilate(dst,None)
+    # Threshold for an optimal value, it may vary depending on the image.
+    grayImg = cv2.cvtColor(grayImg, cv2.COLOR_GRAY2RGB)
+    grayImg[dst>0.01*dst.max()]=[0,0,255]
+    #Convert RGB grayscale and add one more zero column to each pixel
+    zeros = np.zeros((grayImg.shape[0], grayImg.shape[1]))
+    cornerImg = np.dstack((grayImg, zeros))
+    cornerImg = np.uint8(cornerImg)
+    return cornerImg
+
+@application.route('/api/v1/featureprocessing',methods=['POST'])
+def apiResponse():
+    postData = request.get_json()
+
+    imgData = postData['imgData']
+    imgData = Image.open(io.BytesIO(base64.b64decode(imgData)))
+    imgData = np.array(imgData)
+    grayImg = cv2.cvtColor(imgData, cv2.COLOR_BGR2GRAY)
+
+    edges = cv2.Canny( grayImg, 
+        float(postData['edgeMinVal']), 
+        float(postData['edgeMaxVal']) )
+
+    edgeImgBase64 = arrayIntoBase64String(edges)
+    lineImgBase64 = arrayIntoBase64String(getLines(grayImg, edges,
+        float(postData['lineRho']),
+        float(postData['lineTheta']),
+        int(postData['lineThreshold']),
+        float(postData['lineMinLength']),
+        float(postData['lineMaxGap']) ))
+    cornerImgBase64 = arrayIntoBase64String(getCorners(grayImg, 
+        int(postData['cornerBlockSize']),
+        int(postData['cornerKSize']),
+        float(postData['cornerK']) ))
+
+    return jsonify({'edgeImg': edgeImgBase64, 'lineImg': lineImgBase64, 'cornerImg': cornerImgBase64 })
+
+if __name__ == "__main__":
+    application.run(debug=True)
 
 
-# FLASK_DEBUG = 'true'
-
-# scriptpath = os.path.dirname(os.path.realpath(__file__))
-# def readFile(filepath):
-#     with io.open(filepath, 'r', encoding='utf8') as f:
-#         content = f.read().splitlines()
-#     return content
 
 
-# @app.route('/')
-# def index():
-#     return render_template('test_page.html')
+# im = Image.open('/Users/cloudlife/Desktop/train_32.jpg')
+# im = np.array(im)
+# grayImg = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
+# graycorners = getCorners(grayImg)
 
-# @app.route('/api/v2/response',methods=['POST'])
-# # @requires_auth
-# def apiResponse():
-#     postData = request.get_json()
-#     entryValue = str(postData['entryValue'])
+# print(graycorners.shape)
 
-#     if entryValue[-1:]=='\n':
-#         journalStarters = readFile( os.path.join(scriptpath, 'misc', 'journalstarters.txt') )
-#         randomStarter = random.choice(journalStarters)
+# zeroMatrix = np.zeros( (graycorners.shape[0], graycorners.shape[1]) )
 
-#         return jsonify({ 'response': randomStarter })
-
-#     else:
-#         continuations = readFile( os.path.join(scriptpath, 'misc', 'continuations.txt') )
-#         randomContinuation = random.choice(continuations)
-
-#         return jsonify({ 'response': randomContinuation })
-
-# if __name__ == "__main__":
-#     app.run()
-
-
-
-# from celery import Celery
-
-# app = Celery('tasks', broker='redis://localhost:6379/0')
-
-# @app.task
-# def add(x, y):
-#     print(x+y)
-#     return x + y
-
-# add.delay(4, 4)
-
-import schedule
-import time
-from twilio.rest import TwilioRestClient 
-
-# put your own credentials here 
-ACCOUNT_SID = "ACcd689b662aff4e16bc67ffb4dd91da76" 
-AUTH_TOKEN = "395b44c03ed64ce0df0d3c352a1edf57" 
- 
-client = TwilioRestClient(ACCOUNT_SID, AUTH_TOKEN) 
-
-def job():
-    print("I'm working...")
-    client.messages.create(
-        to="+19164022827", 
-        from_="+15598887372", 
-        body="""Hey leave a journal entry, at http://alphadev-dev.sn22bmaivu.us-west-1.elasticbeanstalk.com/ """, 
-        media_url="https://c1.staticflickr.com/3/2899/14341091933_1e92e62d12_b.jpg", 
-    )
-
-schedule.every(1).minutes.do(job)
-
-while True:
-    schedule.run_pending()
-    time.sleep(1)
+# done = np.dstack((graycorners, zeroMatrix))
+# print(done.shape)
+# done = np.uint8(done)
+# that = arrayIntoBase64String(done)
