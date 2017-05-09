@@ -52,6 +52,11 @@
   margin: 10px;
 }
 
+#submitButton {
+  width: 50%;
+  margin: auto;
+}
+
 input {
   text-align: center;
   border: none;

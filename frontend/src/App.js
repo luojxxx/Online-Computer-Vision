@@ -48,7 +48,7 @@ class App extends Component {
     document.getElementById('k size').value = this.state.cornerKSize;
     document.getElementById('k').value = this.state.cornerK;
 
-    setTimeout( this.postApi, 250 )
+    setTimeout( this.postApi, 250 );
   }
 
   debounce(fn, delay) {
@@ -65,26 +65,48 @@ class App extends Component {
   returnDim(url) {
         var img = new Image();
         img.src = url;
-        return { width: img.width , height: img.height }
+        return { width: img.width , height: img.height };
     }
+
+  limitSize(dim, limit) {
+    var ratio = dim.width/dim.height;
+
+    if (dim.width > limit || dim.height > limit) {
+      if (dim.width > dim.height) {
+        dim.height = dim.height * (limit/dim.width);
+        dim.width = limit;
+
+      } else {
+        dim.width = dim.width * (limit/dim.height);
+        dim.height = limit;
+      }
+    }
+
+    return dim;
+  }
 
   getBase64Image() {
       var imgElem = document.getElementById("mainImg");
       var canvas = document.createElement("canvas");
 
-      var dim = this.returnDim(imgElem.src)
+      var dim = this.returnDim(imgElem.src);
+      dim = this.limitSize(dim, 800);
 
-      canvas.width = dim.width
-      canvas.height = dim.height
+      canvas.width = dim.width;
+      canvas.height = dim.height;
       var ctx = canvas.getContext("2d");
-      ctx.drawImage(imgElem, 0, 0);
+      ctx.drawImage(imgElem, 0, 0, canvas.width, canvas.height);
       var dataURL = canvas.toDataURL("image/png");
       return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
   }
 
   onDZDrop(files) {
       var imgSrc = URL.createObjectURL(files[0]);
-      this.setState({ img:imgSrc });
+      this.setState({ 
+        img:imgSrc, 
+        edgeImg: null,
+        lineImg: null,
+        cornerImg: null });
 
       this.postApi();
   }
@@ -106,7 +128,7 @@ class App extends Component {
           cornerBlockSize: document.getElementById('block size').value,
           cornerKSize: document.getElementById('k size').value,
           cornerK: document.getElementById('k').value,
-        }
+        };
   }
 
   onUpdate(evt) {
@@ -132,7 +154,7 @@ class App extends Component {
         edgeImg: 'data:image/png;base64,' + json.edgeImg,
         lineImg: 'data:image/png;base64,' + json.lineImg,
         cornerImg: 'data:image/png;base64,' + json.cornerImg });
-    })
+    });
   }
 
   render() {
@@ -199,7 +221,7 @@ class App extends Component {
             </div>
 
             <br />
-            <Button onClick={this.postApi}> Send to api </Button>
+            <Button id='submitButton' onClick={this.postApi}> Send to API </Button>
           </div>
         </div>
 
