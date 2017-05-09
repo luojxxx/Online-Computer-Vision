@@ -25,7 +25,7 @@ class InputRange extends Component {
           <input id={this.props.label} type='number' value={this.props.value} onChange={this.updateSlider}
           min={this.props.min} step={this.props.step} /> 
 
-          <input id={this.props.label+'slider'} type='range' onChange={this.updateInputBox} 
+          <input id={this.props.label+'slider'} type='range' value={this.props.value}  onChange={this.updateInputBox} 
           min={this.props.min} max={this.props.max} step={this.props.step} />
         </div>
       );
