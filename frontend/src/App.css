@@ -22,7 +22,6 @@
 
 .imageContainer {
   width: 100%;
-  margin: 10px;
 }
 
 .imageStyle {
@@ -35,7 +34,6 @@
   flex-direction: column;
   flex-wrap: wrap;
   text-align: center;
-  margin: 10px;
 }
 
 .settingsContainer {
@@ -70,7 +68,7 @@ body {
 
 @media screen and (min-width: 960px) {
   .App {
-    width: 75%;
+    width: 95%;
 }
 
   .contentContainer {
@@ -78,18 +76,18 @@ body {
 }
 
 .imageContainer {
-  width: 47%;
+  width: 60%;
 }
 
 .controlsContainer {
-  width: 47%;
+  width: 40%;
 }
 
 }
 
 @media screen and (min-width: 1920px) {
   .App {
-    width: 1080px;
+    width: 1920px;
 }
 
 }
