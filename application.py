@@ -29,7 +29,8 @@ scriptpath = os.path.dirname(os.path.realpath(__file__))
 
 # Create the Flask app
 application = flask.Flask(__name__)
-application.secret_key = os.environ.get('SECRET_KEY')
+application.config['DEBUG'] = os.environ['FLASK_DEBUG'] == 'true'
+application.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 cors = CORS(application, origins=os.environ.get('ORIGIN') )
 
 def arrayIntoBase64String(imgArr):
@@ -95,5 +96,4 @@ def apiResponse():
 
 # App stuff
 if __name__ == '__main__':
-    application.debug = os.environ['FLASK_DEBUG'] == 'true'
     application.run(host='0.0.0.0', port=int(5000))
