@@ -27,22 +27,10 @@ from PIL import Image
 # Getting server filepath
 scriptpath = os.path.dirname(os.path.realpath(__file__))
 
-# Default config vals
-FLASK_DEBUG = 'false' if os.environ.get('FLASK_DEBUG') is None else os.environ.get('FLASK_DEBUG')
-
 # Create the Flask app
 application = flask.Flask(__name__)
-application.secret_key = '@thisworks'
+application.secret_key = os.environ.get('SECRET_KEY')
 CORS(application)
-
-# Load config values specified above
-application.config.from_object(__name__)
-
-# Load configuration vals from a file
-application.config.from_envvar('APP_CONFIG', silent=True)
-
-# Only enable Flask debugging if an env var is set to true
-application.debug = application.config['FLASK_DEBUG'] in ['true', 'True']
 
 def arrayIntoBase64String(imgArr):
     pil_img = Image.fromarray(imgArr)
