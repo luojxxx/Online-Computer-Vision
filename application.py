@@ -30,7 +30,7 @@ scriptpath = os.path.dirname(os.path.realpath(__file__))
 # Create the Flask app
 application = flask.Flask(__name__)
 application.secret_key = os.environ.get('SECRET_KEY')
-CORS(application)
+cors = CORS(application, origins=os.environ.get('ORIGIN') )
 
 def arrayIntoBase64String(imgArr):
     pil_img = Image.fromarray(imgArr)
