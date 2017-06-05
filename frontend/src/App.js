@@ -1,19 +1,23 @@
 import React, { Component } from 'react';
-import startImg from './smallpic.jpg';
 import './App.css';
 import {Button } from 'react-bootstrap';
 import 'whatwg-fetch';
 import Dropzone from 'react-dropzone';
 import InputRange from './InputRange';
+import startImg from './smallpic.jpg';
+import edgepic from './edgepic.png';
+import linepic from './linepic.png';
+import cornerpic from './cornerpic.png';
 
 class App extends Component {
   constructor(props) {
       super(props);
       this.state = {
+        msg:' ',
         img: startImg,
-        edgeImg: null,
-        lineImg: null,
-        cornerImg: null,
+        edgeImg: edgepic,
+        lineImg: linepic,
+        cornerImg: cornerpic,
         edgeMinVal: 5,
         edgeMaxVal: 25,
         lineRho: 1,
@@ -104,9 +108,9 @@ class App extends Component {
       var imgSrc = URL.createObjectURL(files[0]);
       this.setState({ 
         img:imgSrc, 
-        edgeImg: null,
-        lineImg: null,
-        cornerImg: null });
+        edgeImg: imgSrc,
+        lineImg: imgSrc,
+        cornerImg: imgSrc });
 
       this.postApi();
   }
@@ -138,6 +142,7 @@ class App extends Component {
   }
 
   postApi() {
+    this.setState({msg: 'loading'})
     const allData = Object.assign({}, this.getFormInfo(), {'imgData': this.getBase64Image()} );
 
     fetch('https://imagefeaturewebapp.herokuapp.com/api/v1/featureprocessing', {
@@ -151,6 +156,7 @@ class App extends Component {
 
     }).then( (json) => {
       this.setState({ 
+        msg: ' ',
         edgeImg: 'data:image/png;base64,' + json.edgeImg,
         lineImg: 'data:image/png;base64,' + json.lineImg,
         cornerImg: 'data:image/png;base64,' + json.cornerImg });
@@ -163,6 +169,7 @@ class App extends Component {
 
         <div className='header'>
           <h1>Online Computer Vision</h1>
+          <span>{this.state.msg}&nbsp;</span>
         </div>
 
         <div className='contentContainer'>
