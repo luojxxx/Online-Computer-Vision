@@ -5,9 +5,6 @@ import 'whatwg-fetch';
 import Dropzone from 'react-dropzone';
 import InputRange from './InputRange';
 import startImg from './smallpic.jpg';
-import edgepic from './edgepic.png';
-import linepic from './linepic.png';
-import cornerpic from './cornerpic.png';
 
 class App extends Component {
   constructor(props) {
@@ -15,9 +12,9 @@ class App extends Component {
       this.state = {
         msg:' ',
         img: startImg,
-        edgeImg: edgepic,
-        lineImg: linepic,
-        cornerImg: cornerpic,
+        edgeImg: startImg,
+        lineImg: startImg,
+        cornerImg: startImg,
         edgeMinVal: 5,
         edgeMaxVal: 25,
         lineRho: 1,
@@ -52,7 +49,7 @@ class App extends Component {
     document.getElementById('k size').value = this.state.cornerKSize;
     document.getElementById('k').value = this.state.cornerK;
 
-    setTimeout( this.postApi, 250 );
+    this.postApi();
   }
 
   debounce(fn, delay) {
@@ -67,10 +64,14 @@ class App extends Component {
   }
 
   returnDim(url) {
-        var img = new Image();
-        img.src = url;
-        return { width: img.width , height: img.height };
-    }
+    var img = new Image();
+    img.src = url;
+    return new Promise((resolve, reject) => {
+      img.onload = ()=>{
+        resolve({ width: img.width , height: img.height })
+      };
+    });
+  }
 
   limitSize(dim, limit) {
     var ratio = dim.width/dim.height;
@@ -90,10 +91,12 @@ class App extends Component {
   }
 
   getBase64Image() {
-      var imgElem = document.getElementById("mainImg");
-      var canvas = document.createElement("canvas");
+    return new Promise((resolve, reject) => {
+    var imgElem = document.getElementById("mainImg");
+    var canvas = document.createElement("canvas");
 
-      var dim = this.returnDim(imgElem.src);
+    this.returnDim(imgElem.src)
+    .then( (dim) => {
       dim = this.limitSize(dim, 800);
 
       canvas.width = dim.width;
@@ -101,7 +104,10 @@ class App extends Component {
       var ctx = canvas.getContext("2d");
       ctx.drawImage(imgElem, 0, 0, canvas.width, canvas.height);
       var dataURL = canvas.toDataURL("image/png");
-      return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+      var formattedData = dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+      resolve(formattedData);
+    })
+    });
   }
 
   onDZDrop(files) {
@@ -142,24 +148,30 @@ class App extends Component {
   }
 
   postApi() {
-    this.setState({msg: 'loading'})
-    const allData = Object.assign({}, this.getFormInfo(), {'imgData': this.getBase64Image()} );
+    this.setState({msg: 'loading'});
 
-    fetch('https://imagefeaturewebapp.herokuapp.com/api/v1/featureprocessing', {
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(allData)
-    }).then( (response) => {
-      return response.json();
+    this.getBase64Image()
+    .then((data)=>{
 
-    }).then( (json) => {
-      this.setState({ 
-        msg: ' ',
-        edgeImg: 'data:image/png;base64,' + json.edgeImg,
-        lineImg: 'data:image/png;base64,' + json.lineImg,
-        cornerImg: 'data:image/png;base64,' + json.cornerImg });
+      const allData = Object.assign({}, this.getFormInfo(), {'imgData': data} );
+      fetch('https://imagefeaturewebapp.herokuapp.com/api/v1/featureprocessing', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(allData)
+
+      }).then( (response) => {
+        return response.json();
+
+      }).then( (json) => {
+        this.setState({ 
+          msg: ' ',
+          edgeImg: 'data:image/png;base64,' + json.edgeImg,
+          lineImg: 'data:image/png;base64,' + json.lineImg,
+          cornerImg: 'data:image/png;base64,' + json.cornerImg });
+      });
+
     });
   }
 
