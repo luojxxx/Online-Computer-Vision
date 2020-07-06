@@ -14,7 +14,7 @@ numpy = "*"
 pillow = "*"
 opencv-python-headless = "~=4.2.0.34"
 itsdangerous = "*"
-gunicorn = "~=19.10.0"
+gunicorn = "*"
 
 [requires]
 python_version = "3.7"
