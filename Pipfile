@@ -12,8 +12,8 @@ gunicorn = "*"
 werkzeug = "*"
 requests = "*"
 numpy = "*"
-opencv-python = "*"
 pillow = "*"
+opencv-python-headless = "*"
 
 [requires]
 python_version = "3.7"
