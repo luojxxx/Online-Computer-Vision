@@ -97,4 +97,4 @@ def apiResponse():
 
 # App stuff
 if __name__ == '__main__':
-    application.run(port=5000)
+    application.run(port=(os.environ['PORT'] OR 5000))
