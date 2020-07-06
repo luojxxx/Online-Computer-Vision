@@ -17,7 +17,7 @@ import flask
 from flask import request, Response, send_file, render_template, make_response, flash
 from flask import session, redirect, send_from_directory, jsonify, _request_ctx_stack
 from flask import Flask
-from flask_cors import CORS, cross_origin
+from flask_cors import CORS
 from werkzeug.local import LocalProxy
 
 import cv2
@@ -28,13 +28,14 @@ from PIL import Image
 scriptpath = os.path.dirname(os.path.realpath(__file__))
 
 # Create the Flask app
-application = flask.Flask(__name__)
-application.config['DEBUG'] = os.environ['FLASK_DEBUG'] == 'true'
-application.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
-cors = CORS(application, origins=os.environ.get('ORIGIN') )
+app = flask.Flask(__name__)
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+CORS(app, origins=os.environ.get('ORIGIN'))
+# CORS(app)
 
 def arrayIntoBase64String(imgArr):
     pil_img = Image.fromarray(imgArr)
+    pil_img.convert('RGB')
     buff = io.BytesIO()
     pil_img.save(buff, format="JPEG")
     return base64.b64encode(buff.getvalue()).decode("utf-8")
@@ -65,7 +66,8 @@ def getCorners(grayImg, cornerBlockSize, cornerKSize, cornerK):
     cornerImg = np.uint8(cornerImg)
     return cornerImg
 
-@application.route('/api/v1/featureprocessing',methods=['POST'])
+
+@app.route('/api/v1/featureprocessing', methods=['POST'])
 def apiResponse():
     postData = request.get_json()
 
@@ -75,8 +77,8 @@ def apiResponse():
     grayImg = cv2.cvtColor(imgData, cv2.COLOR_BGR2GRAY)
     grayImg2 = copy.copy(grayImg)
 
-    edges = cv2.Canny( grayImg, 
-        float(postData['edgeMinVal']), 
+    edges = cv2.Canny( grayImg,
+        float(postData['edgeMinVal']),
         float(postData['edgeMaxVal']) )
 
     edgeImgBase64 = arrayIntoBase64String(edges)
@@ -86,7 +88,7 @@ def apiResponse():
         int(float(postData['lineThreshold'])),
         float(postData['lineMinLength']),
         float(postData['lineMaxGap']) ))
-    cornerImgBase64 = arrayIntoBase64String(getCorners(grayImg2, 
+    cornerImgBase64 = arrayIntoBase64String(getCorners(grayImg2,
         int(float(postData['cornerBlockSize'])),
         int(float(postData['cornerKSize'])),
         float(postData['cornerK']) ))
@@ -96,4 +98,4 @@ def apiResponse():
 
 # App stuff
 if __name__ == '__main__':
-    application.run(host='0.0.0.0', port=int(5000))
+    app.run(host='0.0.0.0', port=int(5000))
