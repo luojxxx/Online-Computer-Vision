@@ -33,8 +33,7 @@ application.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 CORS(application, origins=os.environ.get('ORIGIN'))
 
 def arrayIntoBase64String(imgArr):
-    pil_img = Image.fromarray(imgArr)
-    pil_img.convert('RGB')
+    pil_img = Image.fromarray(imgArr, mode='RGB')
     buff = io.BytesIO()
     pil_img.save(buff, format="JPEG")
     return base64.b64encode(buff.getvalue()).decode("utf-8")
@@ -59,10 +58,7 @@ def getCorners(grayImg, cornerBlockSize, cornerKSize, cornerK):
     # Threshold for an optimal value, it may vary depending on the image.
     grayImg = cv2.cvtColor(grayImg, cv2.COLOR_GRAY2RGB)
     grayImg[dst>0.01*dst.max()]=[0,0,255]
-    #Convert RGB grayscale and add one more zero column to each pixel
-    zeros = np.zeros((grayImg.shape[0], grayImg.shape[1]))
-    cornerImg = np.dstack((grayImg, zeros))
-    cornerImg = np.uint8(cornerImg)
+    cornerImg = np.uint8(grayImg)
     return cornerImg
 
 
@@ -80,7 +76,7 @@ def apiResponse():
         float(postData['edgeMinVal']),
         float(postData['edgeMaxVal']) )
 
-    edgeImgBase64 = arrayIntoBase64String(edges)
+    edgeImgBase64 = arrayIntoBase64String(np.dstack([edges, edges, edges]))
     lineImgBase64 = arrayIntoBase64String(getLines(grayImg, edges,
         float(postData['lineRho']),
         float(postData['lineTheta']),
