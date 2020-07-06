@@ -28,10 +28,9 @@ from PIL import Image
 scriptpath = os.path.dirname(os.path.realpath(__file__))
 
 # Create the Flask app
-app = flask.Flask(__name__)
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
-CORS(app, origins=os.environ.get('ORIGIN'))
-# CORS(app)
+application = flask.Flask(__name__)
+application.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+CORS(application, origins=os.environ.get('ORIGIN'))
 
 def arrayIntoBase64String(imgArr):
     pil_img = Image.fromarray(imgArr)
@@ -67,7 +66,7 @@ def getCorners(grayImg, cornerBlockSize, cornerKSize, cornerK):
     return cornerImg
 
 
-@app.route('/api/v1/featureprocessing', methods=['POST'])
+@application.route('/api/v1/featureprocessing', methods=['POST'])
 def apiResponse():
     postData = request.get_json()
 
@@ -98,4 +97,4 @@ def apiResponse():
 
 # App stuff
 if __name__ == '__main__':
-    app.run(port=5000)
+    application.run(port=5000)
