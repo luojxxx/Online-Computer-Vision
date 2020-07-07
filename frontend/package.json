@@ -8,13 +8,16 @@
     "react-dom": "^15.4.1",
     "react-dropzone": "^3.13.1",
     "react-scripts": "3.4.0",
-    "whatwg-fetch": "^2.0.3"
+    "whatwg-fetch": "^2.0.3",
+    "snyk": "^1.360.0"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "CI= react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "browserslist": {
     "production": [
@@ -27,5 +30,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "snyk": true
 }
